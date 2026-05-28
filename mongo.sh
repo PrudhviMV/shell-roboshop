@@ -1,32 +1,40 @@
 #!/bin/bash
 
-#colour codes
-Bk="\e[30m"	
-R="\e[31m"	
-G="\e[32m"	
-Y="\e[33m"	
-B="\e[34m"	
-P="\e[35m"	
-C="\e[36m"	
-W="\e[37m"	
+USERID=$(id -u)
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
 
-AMI_ID="ami-0220d79f3f480ecf5"
-SG_ID="sg-0cec9364e954bfbdd"
-INSTANCE_TYPE="t3.micro"
+LOGS_FOLDER="/var/log/shell-roboshop"
+SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 
-check_root=$(id -u)
+mkdir -p $LOGS_FOLDER
+echo "Script started executed at: $(date)" | tee -a $LOG_FILE
 
-if [ $check_root -ne 0 ]; then
-    echo "User doesn't has root privileage, Hence not proceeding with script."
-    echo "Run this script with root user"
-    exit 1
+if [ $USERID -ne 0 ]; then
+    echo "ERROR:: Please run this script with root privelege"
+    exit 1 # failure is other than 0
 fi
 
-VALIDATE(){
-    if [ $1 -eq 0 ]; then
-        echo "$2 installation successful."
+VALIDATE(){ # functions receive inputs through args just like shell script args
+    if [ $1 -ne 0 ]; then
+        echo -e "$2 ... $R FAILURE $N" | tee -a $LOG_FILE
+        exit 1
     else
-        echo "$2 installation failed."
+        echo -e "$2 ... $G SUCCESS $N" | tee -a $LOG_FILE
     fi
 }
 
+cp mongo.repo /etc/yum.repos.d/mongo.repo
+VALIDATE $? "Adding Mongo repo"
+
+dnf install mongodb-org -y &>>$LOG_FILE
+VALIDATE $? "Installing Mongo db"
+
+systemctl enable mongod
+VALIDATE $? "Enabling Mongo db"
+
+systemctl start mongod
+VALIDATE $? "Starting Mongo db"
