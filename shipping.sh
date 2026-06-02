@@ -72,7 +72,7 @@ VALIDATE $? "Copying shipping service file"
 systemctl daemon-reload &>>LOG_FILE
 VALIDATE $? "Reloading daemon"
 
-systemctl enable shipping &>>LOG_FILE
+sudo systemctl enable shipping &>>LOG_FILE
 VALIDATE $? "Enabling shipping service"
 
 systemctl start shipping &>>LOG_FILE
