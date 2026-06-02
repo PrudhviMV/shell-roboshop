@@ -54,6 +54,7 @@ VALIDATE $? "Fetching shipping component Code"
 rm -rf /app/*
 VALIDATE $? "Deleting code in app directory"
 
+
 cd /app &>>LOG_FILE
 VALIDATE $? "Traversing into shipping app directory"
 
