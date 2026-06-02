@@ -34,7 +34,7 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
     fi
 }
 
-dnf install python3 gcc python3-devel -y &>>LOG_FILE
+dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installing Python"
 
 id roboshop
@@ -45,34 +45,34 @@ id roboshop
         echo "User is already present"
     fi
 
-mkdir -p /app &>>LOG_FILE
+mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Creating App directory"
 
-curl -L -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip  &>>LOG_FILE
+curl -L -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOG_FILE
 VALIDATE $? "Fetching cart component Code"
 
-cd /app &>>LOG_FILE
+cd /app &>>$LOG_FILE
 VALIDATE $? "Traversing into cart app directory"
 
-unzip /tmp/payment.zip &>>LOG_FILE
+unzip /tmp/payment.zip &>>$LOG_FILE
 VALIDATE $? "Unzipping code"
 
-cd /app &>>LOG_FILE
+cd /app &>>$LOG_FILE
 VALIDATE $? "traversed into app directory"
 
-pip3 install -r requirements.txt &>>LOG_FILE
+pip3 install -r requirements.txt &>>$LOG_FILE
 VALIDATE $? "Installing Python"
 
-cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service &>>LOG_FILE
+cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service &>>$LOG_FILE
 VALIDATE $? "Copying cart service file"
 
-systemctl daemon-reload &>>LOG_FILE
+systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "Reloading daemon"
 
-systemctl enable payment &>>LOG_FILE
+systemctl enable payment &>>$LOG_FILE
 VALIDATE $? "Enabling cart service"
 
-systemctl start payment &>>LOG_FILE
+systemctl start payment &>>$LOG_FILE
 VALIDATE $? "starting cart service"
 
 END_TIME=$(date +%s)
