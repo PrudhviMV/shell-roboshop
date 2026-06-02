@@ -52,6 +52,9 @@ VALIDATE $? "Starting Nginx"
 rm -rf /usr/share/nginx/html/* 
 VALIDATE $? "Deleting old Code"
 
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
+VALIDATE $? "Fetching frontend code"
+
 cd /usr/share/nginx/html 
 VALIDATE $? "Traversing into html"
 
