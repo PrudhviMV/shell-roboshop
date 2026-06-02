@@ -34,7 +34,7 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
     fi
 }
 
-dnf install maven -y &>>LOG_FILE
+dnf install maven -y &>>$LOG_FILE
 VALIDATE $? "Installing maven"
 
 id roboshop
@@ -45,44 +45,44 @@ id roboshop
         echo "User is already present"
     fi
 
-mkdir -p /app &>>LOG_FILE
+mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Creating App directory"
 
-curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip  &>>LOG_FILE
+curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip  &>>$LOG_FILE
 VALIDATE $? "Fetching shipping component Code"
 
-rm -rf /app/*
+rm -rf /app/* &>>$LOG_FILE
 VALIDATE $? "Deleting code in app directory"
 
 
-cd /app &>>LOG_FILE
+cd /app &>>$LOG_FILE
 VALIDATE $? "Traversing into shipping app directory"
 
-unzip /tmp/shipping.zip &>>LOG_FILE
+unzip /tmp/shipping.zip &>>$LOG_FILE
 VALIDATE $? "Unzipping code"
 
-cd /app &>>LOG_FILE
+cd /app &>>$LOG_FILE
 VALIDATE $? "traversed into app directory"
 
-mvn clean package &>>LOG_FILE
+mvn clean package &>>$LOG_FILE
 VALIDATE $? "compiling and cleaning package"
 
-mv target/shipping-1.0.jar shipping.jar
+mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
 VALIDATE $? "moving package"
 
-cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service &>>LOG_FILE
+cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service &>>$LOG_FILE
 VALIDATE $? "Copying shipping service file"
 
-systemctl daemon-reload &>>LOG_FILE
+systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "Reloading daemon"
 
-sudo systemctl enable shipping &>>LOG_FILE
+sudo systemctl enable shipping &>>$LOG_FILE
 VALIDATE $? "Enabling shipping service"
 
-systemctl start shipping &>>LOG_FILE
+systemctl start shipping &>>$LOG_FILE
 VALIDATE $? "starting shipping service"
 
-dnf install mysql -y 
+dnf install mysql -y &>>$LOG_FILE
 VALIDATE $? "Installing mysql"
 
 mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities' &>>$LOG_FILE
@@ -94,8 +94,9 @@ else
     echo -e "Shipping data is already loaded ... $Y SKIPPING $N"
 fi
 
-systemctl restart shipping
+systemctl restart shipping &>>$LOG_FILE
 VALIDATE $? "restarting shipping"
+
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( $END_TIME - $START_TIME ))
 echo -e "Script executed in: $Y $TOTAL_TIME Seconds $N"
