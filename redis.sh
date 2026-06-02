@@ -13,6 +13,7 @@ Mongo_host="mongodb.prudhvii.fun"
 SCRIPT_DIR=$PWD
 
 START_TIME=$(date +%s)
+END_TIME=$(date +%s)
 
 echo "Script started at $START_TIME"
 
@@ -50,3 +51,9 @@ VALIDATE $? "Enabling Redis"
 
 systemctl start redis 
 VALIDATE $? "Starting Redis"
+
+echo "Script Ended at $END_TIME"
+
+TOTAL_TIME=$(($END_TIME-$START_TIME))
+
+echo "Total time required to execute script is $TOTAL_TIME"
