@@ -51,6 +51,9 @@ VALIDATE $? "Creating App directory"
 curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip  &>>LOG_FILE
 VALIDATE $? "Fetching shipping component Code"
 
+rm -rf /app/*
+VALIDATE $? "Deleting code in app directory"
+
 cd /app &>>LOG_FILE
 VALIDATE $? "Traversing into shipping app directory"
 
