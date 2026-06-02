@@ -54,6 +54,6 @@ VALIDATE $? "Starting Redis"
 
 echo "Script Ended at $END_TIME"
 
-TOTAL_TIME=$(($END_TIME-$START_TIME))
+TOTAL_TIME=$(( $END_TIME-$START_TIME ))
 
 echo "Total time required to execute script is $TOTAL_TIME"
